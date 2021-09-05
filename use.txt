@@ -1,0 +1,31 @@
+PHINX
+composer require  robmorgan/phinx
+console: php vendor/robmorgan/phinx/bin/phinx init     - создать yaml конфигурацию в корнях
+
+console: php vendor/robmorgan/phinx/  create CreateTableUser  - создаем миграцию 
+
+дописываем в миграцию в метод up() :
+   $foo = $this->table('user')
+   $foo->addColumn('text', 'text')
+   ->addColumn('view','integer')
+   ->addColumn('date','timestamp', ['default'=>'CURENT_TIMESTAMP'])
+   ->addIndex(['id','view'],['unique'=>TRUE])
+   ->(create()  или при обновлении таблицы в новой миграции ->update() )
+
+лучше переписывать методы вместо change()   up()  при выполнении и down() при откате
+
+в метод down() :
+		public function down(): void 
+		{
+			$this->table('users')->drop()->save();
+		}
+
+Изпользуеться если добавляем в существующию таблицу колонку или несколько
+исползуем removeColumn()->update()
+
+___________________________________
+console: php vendor/robmorgan/phinx/bix/phinx migrate  -e development
+console: php vendor/robmorgan/phinx/bix/phinx rollback -e development
+
+ссылка
+https://book.cakephp.org/phinx/0/en/seeding.html#creating-a-new-seed-class
